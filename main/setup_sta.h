@@ -1,0 +1,1 @@
+void setup_sta_mode(char *ssid, char *password);
