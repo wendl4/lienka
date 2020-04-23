@@ -17,6 +17,8 @@ void app_main()
     size_t size = 32;
     char *password = malloc(64);
     size_t p_size = 64;
+    char *mdns_name = malloc(64);
+    size_t mdns_name_size = 64;
 
 
     // NVS INIT START
@@ -51,6 +53,22 @@ void app_main()
                 printf("Error (%s) reading!\n", esp_err_to_name(ret));
         }
         // FIND OUT IF SSID AND PASSWORD IS SET END
+
+        // FIND OUT IF CUSTOM MDNS NAME START
+        ret = nvs_get_str(my_handle, "mdns_name", mdns_name, &mdns_name_size);
+        switch (ret) {
+            case ESP_OK:
+                printf("mdns name from NVS = %s \n", mdns_name);
+                break;
+            case ESP_ERR_NVS_NOT_FOUND:
+                mdns_name = "lienka";
+                printf("mdns name in NVS not found, setting default value - %s \n",mdns_name);
+                nvs_set_str(my_handle, "mdns_name", mdns_name);
+                break;
+            default :
+                printf("Error (%s) reading!\n", esp_err_to_name(ret));
+        }
+        // FIND OUT IF CUSTOM MDNS NAME END
     }
 
 

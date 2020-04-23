@@ -21,24 +21,52 @@
             <a class="nav-link" href="controlsboard.html">Controls board</a>
           </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input id="lienka-address" class="form-control mr-sm-2" type="search" placeholder="Adresa, napr. lienka.local" aria-label="address">
-          <button class="btn btn-light my-2 my-sm-0" type="submit">Skontroluj</button>
-        </form>
+        <div class="form-inline my-2 my-lg-0">
+          <input
+            id="addressInput"
+            pattern="\w+\.local|\d+\.\d+\.\d+\.\d+"
+            title="Must specify address with .local or ip address"
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Adress, e.g. lienka.local"
+            aria-label="address">
+          <button class="btn btn-light my-2 my-sm-0" id="checkAddressButton" type="submit">Check address</button>
+        </div>
       </div>
     </nav>
+    <div id="alertDiv"></div>
     <div class="container">
       <div class="row content-elem">
         <div class="col-lg-6">
-          <form class="form-signin text-center rounded border-dark">
+          <form id="setupStaForm" class="form-signin text-center rounded border-dark">
             <h1 class="h3 mb-3 font-weight-normal">Connect lienka to your WiFi network</h1>
             <label for="ssid" class="sr-only">ssid</label>
-            <input type="text" id="ssid" class="form-control" placeholder="ssid" required autofocus>
+            <input type="text" id="ssid" name="ssid" class="form-control" placeholder="ssid" required autofocus>
             <label for="password" class="sr-only">password</label>
-            <input type="password" id="password" class="form-control mt-3" placeholder="password" required>
-            <button class="btn btn-lg btn-primary btn-block mt-5" type="submit">Connect</button>
+            <input type="password" id="password" name="pass" class="form-control mt-3" placeholder="password" required>
+            <button id="staButton" class="btn btn-lg btn-primary btn-block mt-5">Connect</button>
           </form>
         </div>
+        <!-- Network Modal -->
+        <div class="modal fade" id="networkModal" tabindex="-1" role="dialog" aria-labelledby="networkModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="networkModalLabel">Network info set</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Network credentials sent, lienka now should reboot and connect to your wifi network.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="col-lg-5">
           <div class="table-status">
             <table class="table text-center">
@@ -51,21 +79,89 @@
               <tbody>
                 <tr class="table-light">
                   <td style="font-weight: bold;">hostname</td>
-                  <td>lienka.local</td>
+                  <td id="hostname-td"></td>
                 </tr>
                 <tr class="table-light">
                   <td style="font-weight: bold;">status</td>
-                  <td><span class="badge badge-pill badge-success">connected</span></td>
+                  <td id="statusValue"><span class="badge badge-pill badge-secondary">N/A</span></td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div style="margin-top: 15px" class="text-center">
-            <button type="button" class="btn btn-primary btn-lg m-4">Update status</button>
-            <button type="button" class="btn btn-warning btn-lg m-4">Reset NVS</button>
+            <button type="button" id="statusButton" class="btn btn-info btn-lg m-4">Update status</button>
+            <button type="button" data-toggle="modal" data-target="#resetModal" class="btn btn-warning btn-lg m-4">
+              Reset
+            </button>
+            <!-- Reset Warning Modal -->
+            <div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="resetModalLabel">Reset Warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    This operation will reset the device and all its settings, do you wish to continue?
+                  </div>
+                  <div class="modal-footer">
+                    <button id="resetButton" data-dismiss="modal" type="button" class="btn btn-primary">Reset</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- After Reset Modal -->
+            <div class="modal fade" id="afterResetModal" tabindex="-1" role="dialog" aria-labelledby="afterResetModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="afterResetModalLabel">Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Your device should be now reset
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" data-toggle="modal" data-target="#changeNameModal" class="btn btn-primary btn-lg m-4">
+              Change name
+            </button>
+            <!-- Change name Modal -->
+            <div class="modal fade" id="changeNameModal" tabindex="-1" role="dialog" aria-labelledby="changeNameModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="changeNameModalLabel">Change name</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Change the name of your lienka robot (letters and numbers are allowed). Note that ".local" sufix will be added automatically.
+                  </div>
+                  <input type="text" id="newNameInput" name="newNameInput" class="form-control mt-3" placeholder="e.g. lienka">
+                  <div class="modal-footer">
+                    <button id="changeNameButton" type="button" class="btn btn-primary">Change name</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/index.js"></script>
   </body>
 </html>

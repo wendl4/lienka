@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include <esp_wifi.h>
 #include <esp_event.h>
 #include <esp_log.h>
@@ -11,6 +12,9 @@
 #include "esp_netif.h"
 #include "esp_eth.h"
 #include <esp_http_server.h>
+
+#include <unistd.h>
+#include <mdns.h>
 
 #define MAX_STRING_LEN 64
 
@@ -55,6 +59,14 @@ char* findArg(char* arg, char* string) {
     return strdup(output);
 }
 
+
+
+
+
+
+
+
+
 /* HTTP POST handlers */
 static esp_err_t sendsteps_post_handler(httpd_req_t *req)
 {
@@ -95,6 +107,16 @@ static const httpd_uri_t sendsteps = {
     .user_ctx  = NULL
 };
 
+
+
+
+
+
+
+
+
+
+
 /********** setup-sta handler ***********/
 
 static esp_err_t setup_sta_post_handler(httpd_req_t *req)
@@ -115,7 +137,7 @@ static esp_err_t setup_sta_post_handler(httpd_req_t *req)
         }
 
         /* Send back the same data */
-        httpd_resp_send_chunk(req, buf, ret);
+        
         remaining -= ret;
 
         /* Log data received */
@@ -140,7 +162,9 @@ static esp_err_t setup_sta_post_handler(httpd_req_t *req)
     }
 
     // End response
-    httpd_resp_send_chunk(req, NULL, 0);
+    httpd_resp_send(req, NULL, 0);
+    // need to wait for response to send
+    sleep(1);
     esp_restart();
     return ESP_OK;
 }
@@ -152,30 +176,19 @@ static const httpd_uri_t setup_sta = {
     .user_ctx  = NULL
 };
 
+
+
+
+
+
+
+
+
 /********** reset-nvs handler ***********/
 
 static esp_err_t reset_nvs_post_handler(httpd_req_t *req)
 {
-    char buf[100];
-    int ret, remaining = req->content_len;
     httpd_resp_set_hdr(req,"Access-Control-Allow-Origin","*");
-
-    while (remaining > 0) {
-        /* Read the data for the request */
-        if ((ret = httpd_req_recv(req, buf,
-                        MIN(remaining, sizeof(buf)))) <= 0) {
-            if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
-                /* Retry receiving if timeout occurred */
-                continue;
-            }
-            return ESP_FAIL;
-        }
-
-        /* Send back the same data */
-        httpd_resp_send_chunk(req, buf, ret);
-        remaining -= ret;
-
-    }
 
 	nvs_handle my_handle;
     esp_err_t re;
@@ -191,7 +204,9 @@ static esp_err_t reset_nvs_post_handler(httpd_req_t *req)
 	}
 
     // End response
-    httpd_resp_send_chunk(req, NULL, 0);
+    httpd_resp_send(req, NULL, 0);
+    // need to wait for response to send
+    sleep(1);
     esp_restart();
     return ESP_OK;
 }
@@ -202,6 +217,81 @@ static const httpd_uri_t reset_nvs = {
     .handler   = reset_nvs_post_handler,
     .user_ctx  = NULL
 };
+
+
+
+
+
+
+
+/********** status handler ***********/
+
+static esp_err_t status_get_handler(httpd_req_t *req)
+{
+    httpd_resp_set_hdr(req,"Access-Control-Allow-Origin","*");
+    /* Send a simple response */
+    wifi_mode_t mode;
+    char *resp;
+    esp_wifi_get_mode(&mode);
+    if (mode == WIFI_MODE_STA) {
+        resp = "STA";
+    }
+    else {
+        resp = "AP";
+    }
+    httpd_resp_send(req, resp, strlen(resp));
+    return ESP_OK;
+}
+
+static const httpd_uri_t get_status = {
+    .uri       = "/status",
+    .method    = HTTP_GET,
+    .handler   = status_get_handler,
+    .user_ctx  = NULL
+};
+
+
+
+
+
+/********** mdns get handler ***********/
+
+static esp_err_t hostname_change_post_handler(httpd_req_t *req)
+{
+    httpd_resp_set_hdr(req,"Access-Control-Allow-Origin","*");
+
+    /* set mdns name to NVS */
+    char buf[64];
+
+    /* Truncate if content length larger than the buffer */
+    size_t recv_size = MIN(req->content_len, sizeof(buf));
+
+    httpd_req_recv(req, buf, recv_size);
+    ESP_LOGI(TAG, "New hostname is: %s \n",buf);
+
+    nvs_handle my_handle;
+    nvs_open("storage", NVS_READWRITE, &my_handle);
+    nvs_set_str(my_handle, "mdns_name", buf);
+
+    ESP_ERROR_CHECK(mdns_hostname_set(buf));
+    ESP_LOGI(TAG, "mdns hostname set to: [%s]", buf);
+
+    httpd_resp_send(req, buf, strlen(buf));
+
+    return ESP_OK;
+}
+
+static const httpd_uri_t get_mdns_name = {
+    .uri       = "/change-hostname",
+    .method    = HTTP_POST,
+    .handler   = hostname_change_post_handler,
+    .user_ctx  = NULL
+};
+
+
+
+
+
 
 
 
@@ -218,6 +308,8 @@ static httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(server, &sendsteps);
         httpd_register_uri_handler(server, &setup_sta);
         httpd_register_uri_handler(server, &reset_nvs);
+        httpd_register_uri_handler(server, &get_status);
+        httpd_register_uri_handler(server, &get_mdns_name);
         return server;
     }
 

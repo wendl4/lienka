@@ -9,6 +9,10 @@
 #include "nvs_flash.h"
 #include <mdns.h>
 
+
+nvs_handle my_handle;
+esp_err_t ret;
+
 // MDNS START
 
 void start_mdns_service()
@@ -22,9 +26,15 @@ void start_mdns_service()
     }
 
     //set hostname
-    char *hostname = "lienka";
-    ESP_ERROR_CHECK( mdns_hostname_set(hostname));
-    ESP_LOGI(TAG, "mdns hostname set to: [%s]", hostname);
+    char *mdns_name = malloc(64);
+    size_t mdns_name_size = 64;
+
+    // get name from NVS
+    nvs_open("storage", NVS_READWRITE, &my_handle);
+    nvs_get_str(my_handle, "mdns_name", mdns_name, &mdns_name_size);
+
+    ESP_ERROR_CHECK(mdns_hostname_set(mdns_name));
+    ESP_LOGI(TAG, "mdns hostname set to: [%s]", mdns_name);
     //set default instance
     ESP_ERROR_CHECK( mdns_instance_name_set("Beebot Mdns") );
     ESP_ERROR_CHECK( mdns_service_add(NULL, "_http", "_udp", 80, NULL, 0) );
@@ -34,8 +44,7 @@ void start_mdns_service()
 
 void clearNVS()
 {
-    nvs_handle my_handle;
-    esp_err_t ret;
+
     ret = nvs_open("storage", NVS_READWRITE, &my_handle);
     if (ret != ESP_OK) {
         printf("Error (%s) opening NVS handle!\n", esp_err_to_name(ret));
