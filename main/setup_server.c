@@ -15,6 +15,7 @@
 
 #include <unistd.h>
 #include <mdns.h>
+#include "perform.h"
 
 #define MAX_STRING_LEN 64
 
@@ -70,7 +71,7 @@ char* findArg(char* arg, char* string) {
 /* HTTP POST handlers */
 static esp_err_t sendsteps_post_handler(httpd_req_t *req)
 {
-    char buf[100];
+    char buf[256];
     int ret, remaining = req->content_len;
     httpd_resp_set_hdr(req,"Access-Control-Allow-Origin","*");
 
@@ -85,18 +86,18 @@ static esp_err_t sendsteps_post_handler(httpd_req_t *req)
             return ESP_FAIL;
         }
 
-        /* Send back the same data */
-        httpd_resp_send_chunk(req, buf, ret);
         remaining -= ret;
 
         /* Log data received */
         ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
         ESP_LOGI(TAG, "%.*s", ret, buf);
         ESP_LOGI(TAG, "====================================");
+        char* code = strndup(buf,ret);
+        prepair_program(code);
     }
 
     // End response
-    httpd_resp_send_chunk(req, NULL, 0);
+    httpd_resp_send(req, NULL, 0);
     return ESP_OK;
 }
 
@@ -141,9 +142,9 @@ static esp_err_t setup_sta_post_handler(httpd_req_t *req)
         remaining -= ret;
 
         /* Log data received */
-        char* mybuf = strndup(buf,ret);
-        char* ssid = findArg("ssid",mybuf);
-        char* pass = findArg("pass",mybuf);
+        char* arguments = strndup(buf,ret);
+        char* ssid = findArg("ssid",arguments);
+        char* pass = findArg("pass",arguments);
 
         /* Write sta config to NVS */
         nvs_handle my_handle;
@@ -299,6 +300,7 @@ static httpd_handle_t start_webserver(void)
 {
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+    config.stack_size = 16384;
 
     // Start the httpd server
     ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);

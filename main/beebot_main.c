@@ -1,6 +1,7 @@
 #include <string.h>
 // #include "stepper.h"
 #include <stdio.h>
+#include "stepper.h"
 #include "nvs_flash.h"
 #include "setup_ap.h"
 #include "setup_sta.h"
@@ -91,4 +92,7 @@ void app_main()
 
     // SERVER SETUP
     setup_server();
+
+    // INIT STEPPER
+    initStepper();
 }

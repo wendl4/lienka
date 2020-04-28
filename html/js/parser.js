@@ -22,6 +22,7 @@ class Parser {
         if (val) {
             this.position = -1
             let tree = this.makeTree(this.code)
+            console.log(val)
             return this.InterpretTree(tree)
         }
         else console.log(val)
@@ -129,7 +130,6 @@ class Parser {
         else if (tree instanceof Leaf) {
             output += Commands[tree.command]
         }
-
         return output
     }
 }

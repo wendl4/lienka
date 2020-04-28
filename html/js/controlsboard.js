@@ -1,4 +1,3 @@
-
 var steps = "";
 var tiles = ["up","down","right","left","begin", "end","count2","count3"];
 var boardTiles = Array(10).fill(null);
@@ -94,15 +93,16 @@ function setEvents() {
 function sendSteps() {
 	inputSteps = boardTiles.join("");
 	console.log(inputSteps)
-	$.ajax({
+
+ 	$.ajax({
 		url: "http://lienka.local/sendsteps",
 		type: "post",
-		data: { steps:inputSteps, something:"sadasdas" },
+		data: inputSteps,
 		success: function(odp) {
 			steps = "";
 			console.log("success");
 		},
 		cache: false,
-		error: function () { alert('Nastala chyba.'); }
+		error: function () { console.log('Nastala chyba.'); }
 	});
 }

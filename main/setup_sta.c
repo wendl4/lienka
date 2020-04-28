@@ -117,6 +117,4 @@ void setup_sta_mode(char *ssid,char *password)
 {
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta(ssid,password);
-    // SET GPIO FOR STEPPER OUTPUT
-    // initStepper();
 }
