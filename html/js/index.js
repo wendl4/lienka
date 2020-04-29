@@ -57,7 +57,6 @@ function getStatus() {
             }
             $("#statusValue").html(`<span class='badge badge-pill ${badge}'>${status} ${mode}</span>`);
         },
-        timeout: 3000
     });
 }
 

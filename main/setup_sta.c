@@ -75,15 +75,15 @@ void wifi_init_sta(char * m_ssid, char * m_password)
 
     wifi_config_t wifi_config = {
         .sta = {
-            //.ssid = BEEBOT_ESP_WIFI_SSID,
-            //.password = BEEBOT_ESP_WIFI_PASS
+            .listen_interval = 10,
         },
     };
     strcpy((char *)wifi_config.sta.ssid,m_ssid);
     strcpy((char *)wifi_config.sta.password,m_password);
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
-    ESP_ERROR_CHECK(esp_wifi_start() );
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
+    esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
 
     ESP_LOGI(TAG, "wifi_init_sta finished.");
 

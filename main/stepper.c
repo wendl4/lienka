@@ -49,22 +49,7 @@ void writeSequence(const unsigned int sequenceNo) {
 		else gpio_set_level(PINS2[i], FULL_STEP_MOTOR_SEQUENCE[7-sequenceNo][4-i]);
 	}
 }
-/*
-void writeSequence() {
-	int sequenceLength = sizeof(FULL_STEP_MOTOR_SEQUENCE) / sizeof(FULL_STEP_MOTOR_SEQUENCE[0]);
-	for (int sequenceNo = 0; sequenceNo < sequenceLength; sequenceNo++) {
-		for (int i = 0; i < 4; i++) {
-			if (dir[0] == -1) gpio_set_level(PINS1[i], FULL_STEP_MOTOR_SEQUENCE[sequenceNo][4-i]);
-			else gpio_set_level(PINS1[i], FULL_STEP_MOTOR_SEQUENCE[4-sequenceNo-1][4-i]);
 
-			if (dir[1] == -1) gpio_set_level(PINS2[i], FULL_STEP_MOTOR_SEQUENCE[sequenceNo][4-i]);
-			else gpio_set_level(PINS2[i], FULL_STEP_MOTOR_SEQUENCE[4-sequenceNo-1][4-i]);
-
-		}
-		vTaskDelay(delayMS / portTICK_PERIOD_MS);
-	}
-}
-*/
 void initStepper() {
 	for (int i = 0; i < 4; i++) {
     	gpio_set_direction(PINS1[i], GPIO_MODE_OUTPUT);
