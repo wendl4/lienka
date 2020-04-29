@@ -1,5 +1,5 @@
 var steps = "";
-var tiles = ["up","down","right","left","begin", "end","count2","count3"];
+var tiles = ["count2","count3","begin","end","up","down","right","left"];
 var boardTiles = Array(10).fill(null);
 var dir = "./img/controlboard/";
 var selected = null;
