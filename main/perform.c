@@ -16,23 +16,23 @@ void run(cmd * program) {
         current_command = program[position];
         ESP_LOGI(TAG,"position %d",position);
         if (strcmp(program[position].name,"FWD") == 0) {
-            setDir(-1,1);
-            makeStep();
+            setDir(1,1);
+            makeMove();
             position++;
         }
         else if (strcmp(program[position].name,"BCK") == 0) {
-            setDir(1,-1);
-            makeStep();
+            setDir(-1,-1);
+            makeMove();
             position++;
         }
         else if (strcmp(program[position].name,"LFT") == 0) {
-            setDir(1,1);
-            makeStep();
+            setDir(-1,1);
+            makeMove();
             position++;
         }
         else if (strcmp(program[position].name,"RGHT") == 0) {
-            setDir(-1,-1);
-            makeStep();
+            setDir(1,-1);
+            makeMove();
             position++;
         }
         else if (strcmp(program[position].name,"MOV") == 0) {

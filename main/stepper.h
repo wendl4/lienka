@@ -3,7 +3,7 @@
 
 void writeSequence();
 void initStepper();
-void makeStep();
+void makeMove();
 void setDir(int m1,int m2);
 
 #endif
