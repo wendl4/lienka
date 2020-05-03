@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "bitmap.h"
+#include "esp_camera.h"
+#include "qr_recognition.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include <esp_wifi.h>
 #include <esp_event.h>
 #include <esp_log.h>
@@ -19,8 +23,48 @@
 
 #define MAX_STRING_LEN 64
 
-
 static const char *TAG = "server";
+
+#define BUFFER_LEN 512
+/* Convert the pgm gray in a rgb bitmap */
+static esp_err_t make_gray_bmp(httpd_req_t *req, camera_fb_t * fb)
+{
+    char* buf;
+    int x = 0;
+    int size;
+    esp_err_t err = ESP_OK;
+
+    if (!fb) {
+        ESP_LOGE(TAG, "Camera Capture Failed");
+        return ESP_FAIL;
+    }
+
+    /* To save RAM send the converted image in chunks of 512 bytes. */
+    buf = malloc( BUFFER_LEN * 3 );
+
+    if (!buf) {
+        ESP_LOGE(TAG, "Dynamic memory failed");
+        return ESP_FAIL;
+    }
+
+    while ( (x<fb->len) && (err == ESP_OK) ) {
+        size = (fb->len >= BUFFER_LEN) ? BUFFER_LEN : fb->len;
+
+        /* To convert, match the RGB bytes to the value of the PGM byte. */
+        for (int i=0; i<size; i++) {
+            buf[i * 3 ] = fb->buf[i + x];
+            buf[(i * 3) + 1 ] = fb->buf[i + x];
+            buf[(i * 3) + 2 ] = fb->buf[i + x];
+        }
+
+        err = httpd_resp_send_chunk(req, buf, size * 3);
+        x += size;
+    }
+
+    free(buf);
+
+    return err;
+}
 
 /* Find parameter value in query */
 char* findArg(char* arg, char* string) {
@@ -282,7 +326,8 @@ static esp_err_t hostname_change_post_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-static const httpd_uri_t get_mdns_name = {
+
+static const httpd_uri_t mdns_name = {
     .uri       = "/change-hostname",
     .method    = HTTP_POST,
     .handler   = hostname_change_post_handler,
@@ -291,8 +336,81 @@ static const httpd_uri_t get_mdns_name = {
 
 
 
+/* HTTP bmp handler to take one picture*/
+static esp_err_t handle_rgb_bmp(httpd_req_t *req)
+{
+    esp_err_t err = ESP_OK;
+    httpd_resp_set_hdr(req,"Access-Control-Allow-Origin","*");
+    // acquire a frame
+    camera_fb_t * fb = esp_camera_fb_get();
+
+    sensor_t * sensor = esp_camera_sensor_get();
+
+    if (!fb) {
+        ESP_LOGE(TAG, "Camera Capture Failed");
+        return ESP_FAIL;
+    }
+
+    bitmap_header_t* header = bmp_create_header(fb->width, fb->height);
+    if (header == NULL) {
+        return ESP_FAIL;
+    }
+
+    err = httpd_resp_set_type(req, "image/bmp");
+
+    if (err == ESP_OK){
+        err = httpd_resp_set_hdr(req, "Content-disposition", "inline; filename=capture.bmp");
+    }
+
+    if (err == ESP_OK) {
+        err = httpd_resp_send_chunk(req, (const char*)header, sizeof(*header));
+    }
+
+    free(header);
+
+    if (err == ESP_OK) {
+        /* convert an image with a gray format of 8 bits to a 24 bit bmp. */
+        if(sensor->pixformat == PIXFORMAT_GRAYSCALE){
+            err = make_gray_bmp(req, fb);
+        /* To save RAM and CPU in camera ISR use the rgb565 and convert to RGB in the APP */
+        }else{
+            err = httpd_resp_send_chunk(req, (const char*)fb->buf, fb->len);
+        }
+    }
+
+    /* buf_len as 0 to mark that all chunks have been sent. */
+    if (err == ESP_OK) {
+        err = httpd_resp_send_chunk(req, 0, 0);
+    }
+
+    return err;
+}
+
+static const httpd_uri_t bmp = {
+    .uri       = "/bmp",
+    .method    = HTTP_GET,
+    .handler   = handle_rgb_bmp,
+};
 
 
+/********** check-qr handler ***********/
+
+static esp_err_t check_qr_handler(httpd_req_t *req)
+{
+    httpd_resp_set_hdr(req,"Access-Control-Allow-Origin","*");
+
+    char *resp = qr_recognize();
+
+    httpd_resp_send(req, resp, strlen(resp));
+    return ESP_OK;
+}
+
+static const httpd_uri_t check_qr = {
+    .uri       = "/check-qr",
+    .method    = HTTP_GET,
+    .handler   = check_qr_handler,
+    .user_ctx  = NULL
+};
 
 
 
@@ -300,7 +418,7 @@ static httpd_handle_t start_webserver(void)
 {
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    config.stack_size = 16384;
+    config.stack_size = 111072;
 
     // Start the httpd server
     ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
@@ -311,7 +429,9 @@ static httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(server, &setup_sta);
         httpd_register_uri_handler(server, &reset_nvs);
         httpd_register_uri_handler(server, &get_status);
-        httpd_register_uri_handler(server, &get_mdns_name);
+        httpd_register_uri_handler(server, &mdns_name);
+        httpd_register_uri_handler(server, &bmp);
+        httpd_register_uri_handler(server, &check_qr);
         return server;
     }
 

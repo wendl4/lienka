@@ -1,5 +1,8 @@
 #include <string.h>
-// #include "stepper.h"
+#include <unistd.h>
+#include "qr_recognition.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include <stdio.h>
 #include "stepper.h"
 #include "nvs_flash.h"
@@ -95,4 +98,7 @@ void app_main()
 
     // INIT STEPPER
     initStepper();
+
+    // INIT CAMERA
+    init_camera();
 }

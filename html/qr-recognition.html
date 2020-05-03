@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>Controls Board</title>
+    <meta name="author" content="Samuel Wendl">
+    <meta name="description" content="Lienka bot">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+  </head>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Setup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="controlsboard.html">Controls board </a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="qr-recognition.html">QR recognition <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container" id="main-div">
+      <h1 class="text-center">
+        QR RECOGNITION
+      </h1>
+      <div class="row m-5">
+        <div class="col-md-12 text-center">
+          <div id="qr-info">
+            <div class="col-md-6 offset-md-3">
+                <div class="card mb-4 shadow-sm">
+                    <div id="cameraImage" style="height: 120px; margin-top:25px"></div>
+                    <div class="card-body">
+                      <p class="card-text">
+                        This section provides QR code recognition functionality. After clicking on <b>Look</b>
+                        button, you will get the image from camera and validation if QR code was recognized or not.
+                        Then in case your QR code was recognized, you can use <b>run</b> button to run the code.
+                      </p>
+                      <div>
+                        <span>
+                          <b>Scan result:</b>
+                        </span>
+                        <div id="loader"></div>
+                        <span id="scan-result" class="badge badge-secondary">
+                          N/A
+                        </span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center mr-3 ml-3">
+                        <button type="button" id="lookButton" class="btn btn-sm btn-primary">Look</button>
+                        <button type="button" disabled id="runButton" class="btn btn-sm btn-primary">Run</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/qr-recognition.js"></script>
+</body>
+
+</html>

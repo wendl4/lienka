@@ -210,7 +210,7 @@ CONFIG_SPI_SLAVE_ISR_IN_IRAM=y
 #
 # RTCIO configuration
 #
-# CONFIG_RTCIO_SUPPORT_RTC_GPIO_DESC is not set
+CONFIG_RTCIO_SUPPORT_RTC_GPIO_DESC=y
 # end of RTCIO configuration
 # end of Driver configurations
 
@@ -299,6 +299,20 @@ CONFIG_PM_DFS_INIT_AUTO=y
 # CONFIG_PM_PROFILING is not set
 # CONFIG_PM_TRACE is not set
 # end of Power Management
+
+#
+# Camera configuration
+#
+# CONFIG_OV2640_SUPPORT is not set
+CONFIG_OV7670_SUPPORT=y
+# CONFIG_OV7725_SUPPORT is not set
+# CONFIG_OV3660_SUPPORT is not set
+# CONFIG_OV5640_SUPPORT is not set
+# CONFIG_SCCB_HARDWARE_I2C is not set
+CONFIG_CAMERA_CORE0=y
+# CONFIG_CAMERA_CORE1 is not set
+# CONFIG_CAMERA_NO_AFFINITY is not set
+# end of Camera configuration
 
 #
 # ADC-Calibration
