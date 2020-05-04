@@ -3,15 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <esp_log.h>
 
 int CHAR_0 = 48;
 int CHAR_9 = 57;
 int CHAR_A = 97;
 int CHAR_Z = 122;
 int TOKEN_MAX_LENGTH = 6;
-
-static const char *TAG = "translate";
 
 char * scan(char * prog, char * token) {
     while (*prog != '\0') {
@@ -51,7 +48,6 @@ int translate(char code[], cmd * program) {
     
     stack jump_stack;
     jump_stack.top = 0;
-    ESP_LOGI(TAG,"code - %s",code);
     int curr_register = 0;
     int pc = 0;
     

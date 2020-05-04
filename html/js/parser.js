@@ -23,7 +23,7 @@ class Parser {
         let token = "";
         for (let i=0;i<code.length;i++) {
             token += code[i]
-            if (tiles.includes(token)) {
+            if (commandNames.includes(token)) {
                 output.push(token);
                 token = "";
             }

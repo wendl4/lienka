@@ -1,4 +1,4 @@
-let payload = "";
+var payload = "";
 
 $("#lookButton").click(function () {
     $("#lookButton").attr('disabled', 'disabled');

@@ -11,10 +11,7 @@ static const char *TAG = "Perform";
 void run(cmd * program) {
     int registers[16]; 
     int position = 0;
-    cmd current_command;
     while (strcmp(program[position].name,"HLT") != 0) {
-        current_command = program[position];
-        ESP_LOGI(TAG,"position %d",position);
         if (strcmp(program[position].name,"FWD") == 0) {
             setDir(1,1);
             makeMove();
@@ -64,6 +61,6 @@ void show(cmd * program, int length) {
 void prepair_program(char code[]) {
     cmd program[128];
     int program_length = translate(code,program);
-    show(program, program_length);
+    //show(program, program_length);
     run(program);
 }
