@@ -1,34 +1,6 @@
-let cookieHostName = getHostnameCookie()
-let hostname = (cookieHostName.length > 0) ? `${cookieHostName}.local` : "lienka.local";
-
 $(document).ready(function() {
     refreshHostnameValues()
 });
-
-function setCookie(name,value) {
-    let days = 30;
-    let expirationDate = new Date(Date.now() + days*24*60*60*1000);
-    document.cookie = `${name}=${value}; expires=${expirationDate.toUTCString()};`;
-}
-
-function getHostnameCookie() {
-    let cookies = decodeURIComponent(document.cookie);
-    let regex1 = /hostname=\w+;/;
-    let regex2 = /hostname=\w+$/;
-    let hostnameCookie = cookies.match(regex1);
-    let hostnameValue = "";
-    if (!!hostnameCookie) {
-        hostnameValue = hostnameCookie[0].split("=")[1].slice(0,-1);
-    }
-    else {
-        hostnameCookie = cookies.match(regex2);
-        if (!!hostnameCookie) {
-            hostnameValue = hostnameCookie[0].split("=")[1];
-        }
-    }
-    
-    return hostnameValue
-}
 
 function refreshHostnameValues() {
     $("#hostname-td").html(hostname);

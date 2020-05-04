@@ -1,17 +1,15 @@
-var steps = "";
 var tiles = ["count2","count3","begin","end","up","down","right","left"];
 var boardTiles = Array(10).fill(null);
 var dir = "./img/controlboard/";
 var selected = null;
 
 $(document).ready(function(){
-
 	renderScreen();
 	setEvents();
 });
 
 function prepairImage (width, name, css_class, extension = ".png") {
-	image = document.createElement("IMG");
+	let image = document.createElement("IMG");
 	image.src = dir + name + extension;
 	image.width = width;
 	if (css_class) $(image).addClass(css_class);
@@ -84,25 +82,6 @@ function setEvents() {
 	});
 
 	$("#send-button").click(function () {
-		sendSteps();
-	});
-}
-
-
-
-function sendSteps() {
-	parser = new Parser(boardTiles);
-	inputSteps = boardTiles.join("");
-
- 	$.ajax({
-		url: "http://lienka.local/sendsteps",
-		type: "post",
-		data: inputSteps,
-		success: function(odp) {
-			steps = "";
-			console.log("success");
-		},
-		cache: false,
-		error: function () { console.log('Nastala chyba.'); }
+		sendSteps(boardTiles.join(""));
 	});
 }

@@ -1,3 +1,5 @@
+const commandNames = ["count2","count3","begin","end","up","down","right","left"];
+
 const Commands = {
     up : "FWD",
     down : "BCK",
@@ -11,9 +13,67 @@ const Commands = {
 
 class Parser {
     constructor(code) {
-        this.code = code
+        this.code = this.splitToInstructions(code)
         this.tree = null
         this.position = -1
+    }
+
+    splitToInstructions(code) {
+        let output = [];
+        let token = "";
+        for (let i=0;i<code.length;i++) {
+            token += code[i]
+            if (tiles.includes(token)) {
+                output.push(token);
+                token = "";
+            }
+        }
+        return output;
+    }
+
+    SyntaxAnalyse(code = this.code) {
+        let bracketsratio = 0
+        while (this.position < code.length - 1) {
+            this.position++
+            let command = code[this.position]
+            switch(command) {
+                case "count2":
+                case "count3":
+                    if (code[this.position+1] != "begin") {
+                        return "ERROR: Expecting start tile"
+                    }
+                    break
+                case "up":
+                case "down":
+                case "left":
+                case "right":
+                    if (code[this.position+1] == "begin") {
+                        return "ERROR: Unexpected start tile"
+                    }
+                    break
+                case "begin":
+                    bracketsratio++
+                    if (code[this.position+1] == "begin" || this.position == 0) {
+                        return "ERROR: Unexpected start tile"
+                    }
+                    break
+                case "end":
+                    bracketsratio--
+                    if (code[this.position+1] == "begin") {
+                        return "ERROR: Unexpected start tile"
+                    }
+                    if (this.position == 0 || bracketsratio < 0) {
+                        return "ERROR: Unexpected end tile"
+                    }
+                    break
+                case null:
+                    break
+                default: 
+                    return "ERROR: Undefined command " + command + " " + this.position
+                    break
+            }
+        }
+        return (bracketsratio == 0) ? true : "ERROR: start and end tile number not equal"
     }
 
     Interpret() {
@@ -26,52 +86,6 @@ class Parser {
         }
         else console.log(val)
         return false
-    }
-
-    SyntaxAnalyse(code) {
-        let bracketsratio = 0
-        while (this.position < code.length - 1) {
-            this.position++
-            let command = code[this.position]
-            console.log(command)
-            switch(command) {
-                case "count2":
-                case "count3":
-                    if (code[this.position+1] != "begin") {
-                        return "ERROR: Expecting left bracket"
-                    }
-                    break
-                case "up":
-                case "down":
-                case "left":
-                case "right":
-                    if (code[this.position+1] == "begin") {
-                        return "ERROR: Unexpected left bracket"
-                    }
-                    break
-                case "begin":
-                    bracketsratio++
-                    if (code[this.position+1] == "begin" || this.position == 0) {
-                        return "ERROR: Unexpected left bracket"
-                    }
-                    break
-                case "end":
-                    bracketsratio--
-                    if (code[this.position+1] == "begin") {
-                        return "ERROR: Unexpected left bracket"
-                    }
-                    if (this.position == 0 || bracketsratio < 0) {
-                        return "ERROR: Unexpected right bracket"
-                    }
-                    break
-                case null:
-                    break
-                default: 
-                    return "ERROR: Undefined command " + command + " " + this.position
-                    break
-            }
-        }
-        return (bracketsratio == 0) ? true : "ERROR: Brackets number not equal"
     }
 
     makeTree(code) {
