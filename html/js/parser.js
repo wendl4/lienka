@@ -1,13 +1,12 @@
 const Commands = {
-    up : 1,
-    down : 2,
-    right : 3,
-    left : 4,
-    increment : 5,
-    decrement : 6,
-    jumpIfZero : 7,
-    jump : 8,
-    assign : 9
+    up : "FWD",
+    down : "BCK",
+    right : "RGHT",
+    left : "LFT",
+    decrement : "DCR",
+    jumpIfZero : "JZ",
+    jump : "JMP",
+    assign : "MOV"
 }
 
 class Parser {
@@ -34,6 +33,7 @@ class Parser {
         while (this.position < code.length - 1) {
             this.position++
             let command = code[this.position]
+            console.log(command)
             switch(command) {
                 case "count2":
                 case "count3":
@@ -63,6 +63,8 @@ class Parser {
                     if (this.position == 0 || bracketsratio < 0) {
                         return "ERROR: Unexpected right bracket"
                     }
+                    break
+                case null:
                     break
                 default: 
                     return "ERROR: Undefined command " + command + " " + this.position
@@ -107,16 +109,18 @@ class Parser {
         return root
     }
 
+    /* Tree interpreter not used yet
+
     InterpretTree(tree,curReg = 0) {
         let currentRegister = curReg
         let output = ""
         if (tree instanceof CommandNode) {
             tree.commands.forEach(function (command) {
-                output+=this.InterpretTree(command)
+                output+=this.InterpretTree(command,curReg)
             }.bind(this))
         }
         else if (tree instanceof LoopNode) {
-            output+= Commands.Assign  // assign instruction
+            output+= Commands.assign  // assign instruction
             output+= tree.accumulator // value to be assigned
             output+= currentRegister // register address
 
@@ -132,6 +136,7 @@ class Parser {
         }
         return output
     }
+    */
 }
 
 

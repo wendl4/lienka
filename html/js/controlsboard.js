@@ -91,8 +91,8 @@ function setEvents() {
 
 
 function sendSteps() {
+	parser = new Parser(boardTiles);
 	inputSteps = boardTiles.join("");
-	console.log(inputSteps)
 
  	$.ajax({
 		url: "http://lienka.local/sendsteps",
