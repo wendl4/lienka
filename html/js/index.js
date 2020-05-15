@@ -41,7 +41,7 @@ function checkName(name) {
 		success: function(odp) {
             alert = $("<div class='alert alert-success' role='alert'></div>").text("Hostname was found and set as active.").hide();
             hostname = name;
-            
+            setCookie("hostname",name);
         },
         error: function(xhr, textStatus, error) {
             alert = $("<div class='alert alert-danger' role='alert'></div>").text("Hostname wasn't found.").hide();

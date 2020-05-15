@@ -133,9 +133,8 @@ static esp_err_t sendsteps_post_handler(httpd_req_t *req)
         remaining -= ret;
 
         /* Log data received */
-        ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
+        ESP_LOGI(TAG, "steps");
         ESP_LOGI(TAG, "%.*s", ret, buf);
-        ESP_LOGI(TAG, "====================================");
         char* code = strndup(buf,ret);
         prepair_program(code);
     }
@@ -341,7 +340,7 @@ static esp_err_t handle_rgb_bmp(httpd_req_t *req)
 {
     esp_err_t err = ESP_OK;
     httpd_resp_set_hdr(req,"Access-Control-Allow-Origin","*");
-    // acquire a frame
+
     camera_fb_t * fb = esp_camera_fb_get();
 
     sensor_t * sensor = esp_camera_sensor_get();

@@ -6,10 +6,10 @@
 #include "driver/gpio.h"
 
 const bool FULL_STEP_MOTOR_SEQUENCE[][4] = {
-		{ 0,  0,  0,  1 },
-		{ 0,  0,  1,  0 },
-		{ 0,  1,  0,  0 },
-		{ 1,  0,  0,  0 },
+		{ 0,  0,  1,  1 },
+		{ 0,  1,  1,  0 },
+		{ 1,  1,  0,  0 },
+		{ 1,  0,  0,  1 },
 };
 
 const bool HALF_STEP_MOTOR_SEQUENCE[][4] = {
