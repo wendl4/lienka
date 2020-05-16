@@ -10,7 +10,7 @@
 #include "setup_sta.h"
 #include "setup_server.h"
 #include "other_functionality.h"
-
+#include "file_system.h"
 
 
 void app_main()
@@ -95,6 +95,9 @@ void app_main()
 
     // SERVER SETUP
     setup_server();
+
+    // INIT FS
+    init_fs();
 
     // INIT STEPPER
     initStepper();

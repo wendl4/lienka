@@ -75,7 +75,7 @@ void wifi_init_sta(char * m_ssid, char * m_password)
 
     wifi_config_t wifi_config = {
         .sta = {
-            .listen_interval = 10,
+            //.listen_interval = 10,
         },
     };
     strcpy((char *)wifi_config.sta.ssid,m_ssid);
@@ -83,7 +83,7 @@ void wifi_init_sta(char * m_ssid, char * m_password)
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
-    esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
+    //esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
 
     ESP_LOGI(TAG, "wifi_init_sta finished.");
 

@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <mdns.h>
 #include "perform.h"
+#include "file_server.h"
 
 #define MAX_STRING_LEN 64
 
@@ -415,10 +416,12 @@ static const httpd_uri_t check_qr = {
 
 static httpd_handle_t start_webserver(void)
 {
+    rest_server_context_t *rest_context = calloc(1, sizeof(rest_server_context_t));
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.stack_size = 111072;
-
+    
+    config.uri_match_fn = httpd_uri_match_wildcard;
     // Start the httpd server
     ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
     if (httpd_start(&server, &config) == ESP_OK) {
@@ -431,6 +434,16 @@ static httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(server, &mdns_name);
         httpd_register_uri_handler(server, &bmp);
         httpd_register_uri_handler(server, &check_qr);
+
+        /* URI handler for getting web server files */
+        httpd_uri_t common_get_uri = {
+            .uri = "/*",
+            .method = HTTP_GET,
+            .handler = rest_common_get_handler,
+            .user_ctx = rest_context
+        };
+        httpd_register_uri_handler(server, &common_get_uri);
+
         return server;
     }
 
