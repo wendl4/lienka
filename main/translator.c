@@ -34,7 +34,7 @@ char * scan(char * prog, char * token) {
         }
         prog++;    
     }
-    return "none";
+    return "Error";
 }
  
 char * next(char * code,char * token) {

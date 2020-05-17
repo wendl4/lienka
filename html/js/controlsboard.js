@@ -2,10 +2,16 @@ var tiles = ["count2","count3","begin","end","up","down","right","left"];
 var boardTiles = Array(10).fill(null);
 var dir = "./img/controlboard/";
 var selected = null;
+var QRCode = new QRCode(document.getElementById("qrcode"), {
+    text: "default",
+    width: 1000,
+    height: 1000,
+});
 
 $(document).ready(function(){
 	renderScreen();
 	setEvents();
+	QRCode.clear();
 });
 
 function prepairImage (width, name, css_class, extension = ".png") {
@@ -83,5 +89,15 @@ function setEvents() {
 
 	$("#send-button").click(function () {
 		sendSteps(boardTiles.join(""));
+	});
+
+	$("#qrButton").click(function () {
+		QRCode.makeCode(boardTiles.join(""));
+		var a = document.createElement("a");
+		$("#qrcode").append(a);
+		a.href = $("#qrcode").find('img').attr("src");
+		a.download = "qr.png";
+		a.click();
+		a.href = $("#qrcode").find('img').hide();
 	});
 }

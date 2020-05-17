@@ -60,7 +60,6 @@ void show(cmd * program, int length) {
 
 void prepair_program(char code[]) {
     cmd program[128];
-    int program_length = translate(code,program);
-    //show(program, program_length);
+    translate(code,program);
     run(program);
 }
