@@ -99,5 +99,6 @@ function setEvents() {
 		a.download = "qr.png";
 		a.click();
 		a.href = $("#qrcode").find('img').hide();
+		a.remove();
 	});
 }
