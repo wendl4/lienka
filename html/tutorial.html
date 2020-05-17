@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+ <html>
+
+   <head>
+     <meta charset="utf-8">
+     <title>Tutorial</title>
+     <meta name="author" content="Samuel Wendl">
+     <meta name="description" content="Lienka bot">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link href="css/style.css" rel="stylesheet">
+     <link href="css/bootstrap.min.css" rel="stylesheet">
+   </head>
+   <body>
+     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+         <ul class="navbar-nav mr-auto">
+           <li class="nav-item">
+             <a class="nav-link" href="index.html">Setup</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" href="controls.html">Basic controls</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" href="controlsboard.html">Controls board <span class="sr-only">(current)</span></a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" href="qr-recognition.html">QR recognition</a>
+           </li>
+           <li class="nav-item active">
+             <a class="nav-link" href="tutorial.html">Tutorial</a>
+           </li>
+         </ul>
+       </div>
+     </nav>
+     <div id="alertDiv"></div>
+     <div class="container" id="tutorial-div">
+       <div class="row">
+           <div class="col-md-12 text-center">
+             <button type="button" id="back-button" class="btn btn-dark mb-5"><-</button>
+             <canvas id="tutorialCanvas" width="500" height="300"></canvas>
+             <button type="button" id="next-button" class="btn btn-dark mb-5">-></button>
+           </div>
+       </div>
+       <div class="row m-2">
+         <div class="col-md-12 text-center">
+           <div id="tiles">
+           </div>
+         </div>
+       </div>
+       <div class="row m-2">
+         <div class="col-md-12 text-center">
+           <div id="tile-board">
+           </div>
+         </div>
+       </div>
+     </div>
+
+     <div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="hintModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="hintModalLabel">Tutorial</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="modalText"></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     <div style="visibility: hidden;">
+        <img id="bucket" src="img/tutorial/bucket.png">
+        <img id="face" src="img/tutorial/face.png">
+        <img id="finish" src="img/tutorial/finish.png">
+        <img id="fire" src="img/tutorial/fire.png">
+        <img id="flower-blue" src="img/tutorial/flower-blue.png">
+        <img id="flower-purple" src="img/tutorial/flower-purple.png">
+        <img id="house" src="img/tutorial/house.png">
+        <img id="key" src="img/tutorial/key.png">
+        <img id="pigeon" src="img/tutorial/pigeon.png">
+    </div>
+
+     <script src="js/jquery.min.js"></script>
+     <script src="js/jquery-ui.min.js"></script>
+     <script src="js/parser.js"></script>
+     <script src="js/common.js"></script>
+     <script src="js/tutorial.js"></script>
+     <script src="js/bootstrap.min.js"></script>
+ </body>
+
+ </html>

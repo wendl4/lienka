@@ -84,6 +84,10 @@ body {
   margin-top: 20px;
 }
 
+#hint-button {
+  margin-top: 20px;
+}
+
 .form-signin {
   width: 100%;
   max-width: 430px;

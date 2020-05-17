@@ -42,6 +42,7 @@ function checkName(name) {
             alert = $("<div class='alert alert-success' role='alert'></div>").text("Hostname was found and set as active.").hide();
             hostname = name;
             setCookie("hostname",name);
+            console.log(getHostnameCookie());
             
         },
         error: function(xhr, textStatus, error) {
