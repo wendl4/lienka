@@ -145,3 +145,12 @@ body {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+#tutorialCanvas {
+  border:1px solid #000000;
+  background-image: url("../img/tutorial/grid.png");
+}
+
+#tutorial-div {
+  margin-top: 1em;
+}
